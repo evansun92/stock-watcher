@@ -38,7 +38,8 @@ def main():
     if os.path.exists(STATE_FILE):
         prev = json.load(open(STATE_FILE)).get("available", False)
 
-    if available and not prev:  # 只在狀態轉變時通知
+    if True:
+    #if available and not prev:  # 只在狀態轉變時通知
         msg = f"✅ {title} 有庫存了，快下單！\n{PRODUCT_LINK}"
         if os.environ.get("LINE_TOKEN"): notify_line(msg)
         if os.environ.get("MAIL_USER"): notify_email(msg)
