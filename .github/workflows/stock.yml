@@ -1,7 +1,7 @@
 name: stock-check
 on:
   schedule:
-    - cron: "*/30 * * * *" 
+    - cron: "3,33 * * * *" 
   workflow_dispatch:
 permissions:
   contents: write
