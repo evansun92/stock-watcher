@@ -23,9 +23,9 @@ def notify_line(msg):
         timeout=15,
     ).raise_for_status()
 
-def notify_email(msg):
+def notify_email(subject, msg):
     m = MIMEText(msg)
-    m["Subject"] = "🔔 Cosmic Grape 有貨了！"
+    m["Subject"] = subject
     m["From"] = os.environ["MAIL_USER"]
     m["To"] = os.environ["MAIL_TO"]
     with smtplib.SMTP_SSL("smtp.gmail.com", 465) as s:
@@ -37,11 +37,12 @@ def main():
     prev = False
     if os.path.exists(STATE_FILE):
         prev = json.load(open(STATE_FILE)).get("available", False)
-    
-    if available and not prev:  # 只在狀態轉變時通知
-        msg = f"✅ {title} 有庫存了，快下單！\n{PRODUCT_LINK}"
+
+    if prev and not available:  # 上次有貨 → 這次沒貨
+        subject = "⚠️ Cosmic Grape 已售完"
+        msg = f"❌ {title} 已經 Sold Out。\n{PRODUCT_LINK}"
         if os.environ.get("LINE_TOKEN"): notify_line(msg)
-        if os.environ.get("MAIL_USER"): notify_email(msg)
+        if os.environ.get("MAIL_USER"): notify_email(subject, msg)
 
     json.dump({"available": available}, open(STATE_FILE, "w"))
     print("available =", available)
